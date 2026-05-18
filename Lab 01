@@ -8,9 +8,6 @@ void setup() {
     DDRD &= ~(1 << DDD2);    
 }
 
- // Set PD2 as INPUT 
-    DDRD &= ~(1 << DDD2);
-
     void loop() {
 
     // -------- Status LED Blink --------
