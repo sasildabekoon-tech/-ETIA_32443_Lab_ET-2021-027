@@ -1,0 +1,83 @@
+#define F_CPU 16000000UL
+
+#include <avr/io.h>
+#include <util/delay.h>
+
+#define GREEN_LED PB0
+#define RED_LED PB1
+
+#define BUTTON1 PD2
+#define BUTTON2 PD3
+#define BUTTON3 PD4
+#define BUTTON4 PD5
+
+int main(void)
+{
+    DDRB |= (1 << GREEN_LED) | (1 << RED_LED);
+
+    DDRD &= ~((1 << BUTTON1) | (1 << BUTTON2) |
+              (1 << BUTTON3) | (1 << BUTTON4));
+
+    PORTD |= (1 << BUTTON1) | (1 << BUTTON2) |
+             (1 << BUTTON3) | (1 << BUTTON4);
+
+    uint8_t password[4] = {1, 2, 3, 4};
+    uint8_t entered[4];
+
+    uint8_t index = 0;
+
+    while (1)
+    {
+        if (!(PIND & (1 << BUTTON1)))
+        {
+            entered[index++] = 1;
+            _delay_ms(300);
+        }
+
+        if (!(PIND & (1 << BUTTON2)))
+        {
+            entered[index++] = 2;
+            _delay_ms(300);
+        }
+
+        if (!(PIND & (1 << BUTTON3)))
+        {
+            entered[index++] = 3;
+            _delay_ms(300);
+        }
+
+        if (!(PIND & (1 << BUTTON4)))
+        {
+            entered[index++] = 4;
+            _delay_ms(300);
+        }
+
+        if (index == 4)
+        {
+            uint8_t correct = 1;
+
+            for (uint8_t i = 0; i < 4; i++)
+            {
+                if (entered[i] != password[i])
+                {
+                    correct = 0;
+                }
+            }
+
+            if (correct)
+            {
+                PORTB |= (1 << GREEN_LED);
+                _delay_ms(2000);
+                PORTB &= ~(1 << GREEN_LED);
+            }
+            else
+            {
+                PORTB |= (1 << RED_LED);
+                _delay_ms(2000);
+                PORTB &= ~(1 << RED_LED);
+            }
+
+            index = 0;
+        }
+    }
+}
